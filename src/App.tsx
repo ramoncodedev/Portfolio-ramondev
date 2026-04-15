@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Github, 
   Linkedin, 
@@ -10,7 +11,9 @@ import {
   Layers,
   Server,
   ChevronRight,
-  TrendingUp
+  TrendingUp,
+  Menu,
+  X
 } from "lucide-react";
 import { HeroGeometric } from "@/src/components/ui/shape-landing-hero";
 import SectionWithMockup from "@/src/components/ui/section-with-mockup";
@@ -102,10 +105,13 @@ const projectItems: BentoItem[] = [
 ];
 
 export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navItems = ['Sobre', 'Projetos', 'Skills', 'Contato'];
+
   return (
     <div className="min-h-screen bg-[#030303] selection:bg-accent/30 selection:text-accent">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-[#030303]/80 backdrop-blur-md">
+      <nav className="fixed top-0 w-full z-[100] bg-[#030303]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
@@ -113,8 +119,10 @@ export default function App() {
             </div>
             <span className="font-mono text-sm tracking-tighter uppercase font-bold text-white">Ramon.dev</span>
           </div>
+
+          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            {['Sobre', 'Projetos', 'Skills', 'Contato'].map((item) => (
+            {navItems.map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase()}`} 
@@ -124,7 +132,40 @@ export default function App() {
               </a>
             ))}
           </div>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="md:hidden text-white/60 hover:text-white transition-colors"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile Nav Overlay */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-16 left-0 w-full bg-[#030303] border-b border-white/5 md:hidden"
+            >
+              <div className="flex flex-col p-6 gap-4">
+                {navItems.map((item) => (
+                  <a 
+                    key={item} 
+                    href={`#${item.toLowerCase()}`} 
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-sm font-mono uppercase tracking-[0.2em] text-white/60 hover:text-blue-400 transition-colors py-2"
+                  >
+                    {item}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <main className="relative">
@@ -136,25 +177,27 @@ export default function App() {
           title2="robustas e escaláveis com Java."
           description="Engenharia de Software focada em performance, segurança e código limpo. Transformando lógica complexa em sistemas eficientes."
         >
-          <a 
-            href="https://github.com" 
-            target="_blank" 
-            rel="noreferrer"
-            className="flex items-center gap-2 bg-white/5 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-white/10 transition-all group"
-          >
-            <Github size={16} />
-            <span>GitHub</span>
-            <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
-          </a>
-          <a 
-            href="https://linkedin.com" 
-            target="_blank" 
-            rel="noreferrer"
-            className="flex items-center gap-2 text-white/80 px-5 py-2.5 rounded-lg text-sm font-medium hover:text-white hover:bg-white/5 transition-all"
-          >
-            <Linkedin size={16} />
-            <span>LinkedIn</span>
-          </a>
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            <a 
+              href="https://github.com" 
+              target="_blank" 
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 bg-white/5 text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-white/10 transition-all group w-full sm:w-auto"
+            >
+              <Github size={16} />
+              <span>GitHub</span>
+              <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+            <a 
+              href="https://linkedin.com" 
+              target="_blank" 
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 text-white/80 px-6 py-3 rounded-lg text-sm font-medium hover:text-white hover:bg-white/5 transition-all w-full sm:w-auto"
+            >
+              <Linkedin size={16} />
+              <span>LinkedIn</span>
+            </a>
+          </div>
         </HeroGeometric>
 
         {/* About Section */}
@@ -187,24 +230,24 @@ export default function App() {
 
           {/* CTA Section */}
           <section id="contato" className="pb-24 scroll-mt-32">
-            <div className="bg-blue-600/90 rounded-2xl p-10 text-center relative overflow-hidden shadow-2xl shadow-blue-500/10">
+            <div className="bg-blue-600/90 rounded-2xl p-6 sm:p-10 text-center relative overflow-hidden shadow-2xl shadow-blue-500/10">
               <div className="relative z-10">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
                   Vamos construir algo sólido juntos?
                 </h2>
-                <p className="text-white/70 text-base mb-8 max-w-lg mx-auto">
+                <p className="text-white/70 text-sm sm:text-base mb-8 max-w-lg mx-auto">
                   Conecte-se comigo no LinkedIn para networking ou explore meus repositórios no GitHub.
                 </p>
-                <div className="flex flex-wrap justify-center gap-3">
+                <div className="flex flex-col sm:flex-row justify-center gap-3">
                   <a 
                     href="https://linkedin.com" 
-                    className="bg-white text-blue-600 px-6 py-3 rounded-lg text-sm font-bold hover:scale-105 transition-transform"
+                    className="bg-white text-blue-600 px-8 py-4 rounded-lg text-sm font-bold hover:scale-105 transition-transform w-full sm:w-auto"
                   >
                     LinkedIn
                   </a>
                   <a 
                     href="https://github.com" 
-                    className="bg-[#030303] text-white px-6 py-3 rounded-lg text-sm font-bold hover:scale-105 transition-transform"
+                    className="bg-[#030303] text-white px-8 py-4 rounded-lg text-sm font-bold hover:scale-105 transition-transform w-full sm:w-auto"
                   >
                     GitHub
                   </a>
